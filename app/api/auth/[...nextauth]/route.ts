@@ -1,13 +1,12 @@
-import NextAuth from "next-auth";
 import { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import { connectToDatabase } from "@/lib/db";
 import { compare } from "bcryptjs";
 import User from "@/models/user";
-import { NextRequest, NextResponse } from "next/server";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
@@ -49,7 +48,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id || user._id;
         token.email = user.email;
@@ -69,11 +68,14 @@ const authOptions: NextAuthOptions = {
     error: "/auth/error",
   },
   events: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
       if (account?.provider === "github") {
         await connectToDatabase();
+        
+        // Check if user exists
         const existingUser = await User.findOne({ email: user.email });
         if (!existingUser) {
+          // Create new user from GitHub data
           await User.create({
             name: user.name,
             email: user.email,
@@ -86,11 +88,4 @@ const authOptions: NextAuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
-export async function GET(req: NextRequest) {
-  return handler(req as any);
-}
-
-export async function POST(req: NextRequest) {
-  return handler(req as any);
-}
+export { handler as GET, handler as POST };
