@@ -18,13 +18,21 @@ const documentSchema = new mongoose.Schema(
     },
     privacy: {
       type: String,
-      enum: ["private", "public", "restricted"],
+      enum: ["private", "public", "restricted", "one-time"],
       default: "private",
       required: true,
     },
     publicSlug: {
       type: String,
       sparse: true,
+    },
+    oneTimeKey: {
+      type: String,
+      sparse: true,
+    },
+    oneTimeViewed: {
+      type: Boolean,
+      default: false,
     },
     viewCount: {
       type: Number,
@@ -61,8 +69,10 @@ const documentSchema = new mongoose.Schema(
 
 // Create indexes
 documentSchema.index({ publicSlug: 1 }, { sparse: true });
+documentSchema.index({ oneTimeKey: 1 }, { sparse: true });
 documentSchema.index({ "allowedUsers.email": 1 });
 
+// Ensure the model is not recreated if it already exists
 const Document = mongoose.models.Document || mongoose.model("Document", documentSchema);
 
 export default Document;
