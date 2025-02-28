@@ -8,51 +8,75 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Github } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import ErrorField from "@/components/ui/error-field";
+
+const initialValues = {
+  email: "",
+  password: "",
+};
+
+const validationSchema = Yup.object({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});
 
 export default function SignIn() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const result = await signIn("credentials", {
-        ...formData,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-
+  const mutationSignin = useMutation({
+    mutationFn: async (params: any) => await signIn(...params),
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Signed in successfully",
       });
-
       router.push("/documents");
       router.refresh();
-    } catch (error: any) {
+    },
+    onError: () => {
       toast({
         title: "Error",
-        description: error.message,
+        description: "Failed to sign in",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
-  const handleGithubSignIn = () => {
-    signIn("github", { callbackUrl: "/documents" });
+  const {
+    values,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    errors,
+    isSubmitting,
+  } = useFormik({
+    initialValues,
+    validationSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: async (values, { setSubmitting }) => {
+      await mutationSignin.mutateAsync([
+        "credentials",
+        {
+          ...values,
+          redirect: false,
+        },
+      ]);
+      setSubmitting(false);
+    },
+  });
+  const handleGithubSignIn = async () => {
+    await mutationSignin.mutateAsync([
+      "github",
+      {
+        redirect: true,
+        callbackUrl: "/documents",
+      },
+    ]);
   };
 
   return (
@@ -67,26 +91,32 @@ export default function SignIn() {
               <Input
                 type="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
+                name="email"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              <ErrorField message={errors.email} />
             </div>
             <div className="space-y-2">
               <Input
                 type="password"
                 placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              <ErrorField message={errors.password} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || mutationSignin.isPending}
+            >
+              {isSubmitting || mutationSignin.isPending
+                ? "Signing in..."
+                : "Sign In"}
             </Button>
           </form>
 
@@ -105,6 +135,7 @@ export default function SignIn() {
             type="button"
             variant="outline"
             className="w-full"
+            disabled={isSubmitting || mutationSignin.isPending}
             onClick={handleGithubSignIn}
           >
             <Github className="mr-2 h-4 w-4" />

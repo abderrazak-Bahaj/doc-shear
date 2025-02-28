@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/navbar";
+import QueryProvider from "@/components/providers/query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,22 +21,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-              <main className="flex-1 container mx-auto py-6">
-                {children}
-              </main>
-            </div>
-            <Toaster />
-          </SessionProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionProvider>
+              <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-1 container mx-auto py-6">
+                  {children}
+                </main>
+              </div>
+              <Toaster />
+            </SessionProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

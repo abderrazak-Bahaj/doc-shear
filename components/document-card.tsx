@@ -20,44 +20,25 @@ interface DocumentCardProps {
   onCopy?: () => void;
 }
 
-export default function DocumentCard({ document, onDelete , onCopy }: DocumentCardProps) {
+export default function DocumentCard({
+  document,
+  onDelete,
+  onCopy,
+}: DocumentCardProps) {
   const router = useRouter();
-
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    try {
-      const response = await fetch(`/api/documents/${document._id}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete document');
-      }
-
-      toast({
-        title: "Success",
-        description: "Document deleted successfully",
-      });
-
-      onDelete?.();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete document",
-        variant: "destructive",
-      });
-    }
+    onDelete?.();
   };
-
   const handleClick = () => {
     router.push(`/documents/${document._id}`);
   };
-  const handelCopy = (e: React.MouseEvent) =>{
-    e.preventDefault()
-    e.stopPropagation()
-    onCopy?.()
-  }
-
+  const handelCopy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onCopy?.();
+  };
+  
   return (
     <Card className="hover-card group cursor-pointer overflow-hidden bg-card">
       <CardHeader className="space-y-1 pb-4">
@@ -68,7 +49,15 @@ export default function DocumentCard({ document, onDelete , onCopy }: DocumentCa
           </CardTitle>
           <div className="flex items-center gap-2">
             {document.privacy && (
-              <Badge variant={document.privacy === "public" ? "default" : document.privacy === "one-time" ? "destructive" : "secondary"}>
+              <Badge
+                variant={
+                  document.privacy === "public"
+                    ? "default"
+                    : document.privacy === "one-time"
+                    ? "destructive"
+                    : "secondary"
+                }
+              >
                 {document.privacy}
               </Badge>
             )}
@@ -89,16 +78,16 @@ export default function DocumentCard({ document, onDelete , onCopy }: DocumentCa
             <Calendar className="h-4 w-4" />
             <span>{new Date(document.updatedAt).toLocaleDateString()}</span>
           </div>
-          {document.viewCount !== undefined && (
+          {document.privacy !== "private" && (
             <div className="flex items-center gap-1">
               <Eye className="h-4 w-4" />
-              <span>{document.viewCount} views</span>
+              <span>{document.viewCount || 0} views</span>
             </div>
           )}
           {document.oneTimeKey && (
             <button className="flex items-center gap-1" onClick={handelCopy}>
               <Badge variant="outline" className="text-xs">
-                Get link & Key 
+                Get link & Key
               </Badge>
             </button>
           )}
