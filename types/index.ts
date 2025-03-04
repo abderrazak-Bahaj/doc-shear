@@ -17,10 +17,10 @@ export interface DocumentData {
 }
 export interface Document {
   _id: string;
-  title: string; 
+  title: string;
   content: string;
   updatedAt: string;
-  privacy?: "private" | "public" | "restricted";
+  privacy?: 'private' | 'public' | 'restricted';
   viewCount: number;
   publicSlug?: string;
   oneTimeKey?: string;

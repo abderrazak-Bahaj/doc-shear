@@ -1,17 +1,14 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import Document from "@/models/document";
+import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/db';
+import Document from '@/models/document';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
     const url = new URL(request.url);
-    const key = url.searchParams.get("key");
+    const key = url.searchParams.get('key');
 
     if (!key) {
-      return new NextResponse("Access key is required", { status: 400 });
+      return new NextResponse('Access key is required', { status: 400 });
     }
 
     await connectToDatabase();
@@ -20,11 +17,11 @@ export async function GET(
     const document = await Document.findOne({
       publicSlug: params.slug,
       oneTimeKey: key,
-      privacy: "one-time"
+      privacy: 'one-time',
     });
 
     if (!document) {
-      return new NextResponse("Document not found or already viewed", { status: 404 });
+      return new NextResponse('Document not found or already viewed', { status: 404 });
     }
 
     // Document found, prepare response
@@ -32,7 +29,7 @@ export async function GET(
       _id: document._id,
       title: document.title,
       content: document.content,
-      updatedAt: document.updatedAt
+      updatedAt: document.updatedAt,
     };
 
     // Delete the document as it's one-time view
@@ -40,7 +37,7 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error accessing one-time document:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error accessing one-time document:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

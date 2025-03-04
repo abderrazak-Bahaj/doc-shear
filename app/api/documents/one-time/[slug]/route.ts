@@ -1,16 +1,13 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import Document from "@/models/document";
+import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/db';
+import Document from '@/models/document';
 
-export async function POST(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function POST(request: Request, { params }: { params: { slug: string } }) {
   try {
     const { key } = await request.json();
 
     if (!key) {
-      return new NextResponse("Access key is required", { status: 400 });
+      return new NextResponse('Access key is required', { status: 400 });
     }
 
     await connectToDatabase();
@@ -19,15 +16,12 @@ export async function POST(
     const document = await Document.findOne({
       publicSlug: params.slug,
       oneTimeKey: key,
-      privacy: "one-time",
+      privacy: 'one-time',
       oneTimeViewed: false,
     });
 
     if (!document) {
-      return new NextResponse(
-        "Document not found or has already been viewed",
-        { status: 404 }
-      );
+      return new NextResponse('Document not found or has already been viewed', { status: 404 });
     }
 
     // Mark as viewed
@@ -43,7 +37,7 @@ export async function POST(
       content: document.content,
     });
   } catch (error) {
-    console.error("Error in one-time document API:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error in one-time document API:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

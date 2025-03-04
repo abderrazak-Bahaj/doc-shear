@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,25 +6,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 
-const ViewLink = ({
-  docSelected,
-  setDocSeleced,
-}: {
-  docSelected: any;
-  setDocSeleced: any;
-}) => {
-  const isOneTime = docSelected?.privacy === "one-time";
+const ViewLink = ({ docSelected, setDocSeleced }: { docSelected: any; setDocSeleced: any }) => {
+  const isOneTime = docSelected?.privacy === 'one-time';
 
   return (
-    <Dialog
-      open={!!docSelected}
-      onOpenChange={(open) => !open && setDocSeleced(null)}
-    >
+    <Dialog open={!!docSelected} onOpenChange={open => !open && setDocSeleced(null)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Copy Link</DialogTitle>
@@ -39,12 +30,12 @@ const ViewLink = ({
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              {isOneTime ? "One-time View Link" : "Shared View Link"}
+              {isOneTime ? 'One-time View Link' : 'Shared View Link'}
             </label>
             <div className="flex items-center gap-2">
               <Input
                 value={`${window.location.origin}/${
-                  isOneTime ? "one-time" : "shared"
+                  isOneTime ? 'one-time' : 'shared'
                 }/${docSelected?.publicSlug}`}
                 readOnly
               />
@@ -53,12 +44,12 @@ const ViewLink = ({
                 onClick={() => {
                   navigator.clipboard.writeText(
                     `${window.location.origin}/${
-                      isOneTime ? "one-time" : "shared"
+                      isOneTime ? 'one-time' : 'shared'
                     }/${docSelected?.publicSlug}`
                   );
                   toast({
-                    title: "Success",
-                    description: "Link copied to clipboard",
+                    title: 'Success',
+                    description: 'Link copied to clipboard',
                   });
                 }}
               >
@@ -77,8 +68,8 @@ const ViewLink = ({
                       onClick={() => {
                         navigator.clipboard.writeText(docSelected?.oneTimeKey);
                         toast({
-                          title: "Success",
-                          description: "Key copied to clipboard",
+                          title: 'Success',
+                          description: 'Key copied to clipboard',
                         });
                       }}
                     >
@@ -87,8 +78,7 @@ const ViewLink = ({
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Share this link with someone. The document will be deleted
-                  after it&apos;s viewed.
+                  Share this link with someone. The document will be deleted after it&apos;s viewed.
                 </p>
               </>
             )}

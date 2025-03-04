@@ -1,30 +1,25 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { TipTapEditor } from "@/components/editor/tiptap-editor";
-import { toast } from "@/components/ui/use-toast";
-import { Loader2, Lock, Eye, AlertTriangle } from "lucide-react";
-import { DocumentData } from "@/types";
-import { getOneTimeDocument } from "@/services/api";
-
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { TipTapEditor } from '@/components/editor/tiptap-editor';
+import { toast } from '@/components/ui/use-toast';
+import { Loader2, Lock, Eye, AlertTriangle } from 'lucide-react';
+import { DocumentData } from '@/types';
+import { getOneTimeDocument } from '@/services/api';
 
 // Validation schema
 const validationSchema = Yup.object({
-  key: Yup.string().required("Access key is required")
+  key: Yup.string().required('Access key is required'),
 });
 
-export default function OneTimeDocumentPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function OneTimeDocumentPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
   const [document, setDocument] = useState<DocumentData | null>(null);
   const [viewed, setViewed] = useState(false);
@@ -32,20 +27,20 @@ export default function OneTimeDocumentPage({
   // Use React Query mutation for fetching the document
   const { mutate, isPending, error, isError } = useMutation({
     mutationFn: (key: string) => getOneTimeDocument(params.slug, key),
-    onSuccess: (data) => {
+    onSuccess: data => {
       setDocument(data);
       setViewed(true);
       toast({
-        title: "Document accessed",
-        description: "This document can only be viewed once.",
-        variant: "default",
+        title: 'Document accessed',
+        description: 'This document can only be viewed once.',
+        variant: 'default',
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to access document",
-        variant: "destructive",
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to access document',
+        variant: 'destructive',
       });
     },
   });
@@ -53,10 +48,10 @@ export default function OneTimeDocumentPage({
   // Initialize Formik
   const formik = useFormik({
     initialValues: {
-      key: "",
+      key: '',
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: values => {
       mutate(values.key);
     },
   });
@@ -76,15 +71,14 @@ export default function OneTimeDocumentPage({
               <AlertTriangle className="h-5 w-5 mt-0.5" />
               <div className="text-sm">
                 <p className="font-semibold">Important Notice</p>
-                <p>This document can only be viewed once. Once you leave this page, you won't be able to access it again.</p>
+                <p>
+                  This document can only be viewed once. Once you leave this page, you won't be able
+                  to access it again.
+                </p>
               </div>
             </div>
             <h1 className="text-2xl font-bold">{document.title}</h1>
-            <TipTapEditor
-              content={document.content}
-              onChange={() => {}}
-              editable={false}
-            />
+            <TipTapEditor content={document.content} onChange={() => {}} editable={false} />
           </CardContent>
         </Card>
       </div>
@@ -114,20 +108,20 @@ export default function OneTimeDocumentPage({
                 disabled={isPending}
                 aria-describedby="key-error"
               />
-              {(formik.touched.key && formik.errors.key) && (
+              {formik.touched.key && formik.errors.key && (
                 <p id="key-error" className="text-sm text-destructive">
                   {formik.errors.key}
                 </p>
               )}
               {isError && (
                 <p className="text-sm text-destructive">
-                  {error instanceof Error ? error.message : "Failed to access document"}
+                  {error instanceof Error ? error.message : 'Failed to access document'}
                 </p>
               )}
             </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={isPending || !formik.isValid || !formik.dirty}
             >
               {isPending ? (
@@ -136,7 +130,7 @@ export default function OneTimeDocumentPage({
                   Accessing...
                 </>
               ) : (
-                "View Document"
+                'View Document'
               )}
             </Button>
           </form>

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const documentSchema = new mongoose.Schema(
   {
@@ -8,7 +8,7 @@ const documentSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      default: "",
+      default: '',
     },
     userId: {
       type: String,
@@ -16,8 +16,8 @@ const documentSchema = new mongoose.Schema(
     },
     privacy: {
       type: String,
-      enum: ["private", "public", "restricted", "one-time"],
-      default: "private",
+      enum: ['private', 'public', 'restricted', 'one-time'],
+      default: 'private',
     },
     publicSlug: {
       type: String,
@@ -32,7 +32,7 @@ const documentSchema = new mongoose.Schema(
         email: String,
         role: {
           type: String,
-          enum: ["viewer", "editor"],
+          enum: ['viewer', 'editor'],
         },
       },
     ],
@@ -56,6 +56,6 @@ documentSchema.index({ oneTimeKey: 1 }, { unique: true, sparse: true });
 mongoose.models = {};
 
 // Create and export the model
-const Document = mongoose.model("Document", documentSchema);
+const Document = mongoose.model('Document', documentSchema);
 
 export default Document;

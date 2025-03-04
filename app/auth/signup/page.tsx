@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
-import { signup } from "@/services/api";
-import { useMutation } from "@tanstack/react-query";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import ErrorField from "@/components/ui/error-field";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
+import { signup } from '@/services/api';
+import { useMutation } from '@tanstack/react-query';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import ErrorField from '@/components/ui/error-field';
 
 export default function SignUp() {
   const router = useRouter();
@@ -19,40 +19,33 @@ export default function SignUp() {
     mutationFn: signup,
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Account created successfully",
+        title: 'Success',
+        description: 'Account created successfully',
       });
-      router.push("/auth/signin");
+      router.push('/auth/signin');
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to create account",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to create account',
+        variant: 'destructive',
       });
     },
   });
 
   const initialValues = {
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string().required("Password is required"),
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: Yup.string().required('Password is required'),
   });
 
-  const {
-    values,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    errors,
-    isSubmitting,
-  } = useFormik({
+  const { values, handleChange, handleBlur, handleSubmit, errors, isSubmitting } = useFormik({
     initialValues,
     validationSchema,
     validateOnBlur: false,
@@ -112,11 +105,11 @@ export default function SignUp() {
               className="w-full"
               disabled={isSubmitting || mutationSignup.isPending}
             >
-              {mutationSignup.isPending ? "Creating account..." : "Sign Up"}
+              {mutationSignup.isPending ? 'Creating account...' : 'Sign Up'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href="/auth/signin" className="text-blue-500 hover:underline">
               Sign In
             </Link>

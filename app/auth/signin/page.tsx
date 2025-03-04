@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Github } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import ErrorField from "@/components/ui/error-field";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Github } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { useMutation } from '@tanstack/react-query';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import ErrorField from '@/components/ui/error-field';
 
 const initialValues = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 };
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().required("Password is required"),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  password: Yup.string().required('Password is required'),
 });
 
 export default function SignIn() {
@@ -31,36 +31,29 @@ export default function SignIn() {
     mutationFn: async (params: any) => await signIn(...params),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Signed in successfully",
+        title: 'Success',
+        description: 'Signed in successfully',
       });
-      router.push("/documents");
+      router.push('/documents');
       router.refresh();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to sign in",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to sign in',
+        variant: 'destructive',
       });
     },
   });
 
-  const {
-    values,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    errors,
-    isSubmitting,
-  } = useFormik({
+  const { values, handleChange, handleBlur, handleSubmit, errors, isSubmitting } = useFormik({
     initialValues,
     validationSchema,
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
       await mutationSignin.mutateAsync([
-        "credentials",
+        'credentials',
         {
           ...values,
           redirect: false,
@@ -71,10 +64,10 @@ export default function SignIn() {
   });
   const handleGithubSignIn = async () => {
     await mutationSignin.mutateAsync([
-      "github",
+      'github',
       {
         redirect: true,
-        callbackUrl: "/documents",
+        callbackUrl: '/documents',
       },
     ]);
   };
@@ -114,9 +107,7 @@ export default function SignIn() {
               className="w-full"
               disabled={isSubmitting || mutationSignin.isPending}
             >
-              {isSubmitting || mutationSignin.isPending
-                ? "Signing in..."
-                : "Sign In"}
+              {isSubmitting || mutationSignin.isPending ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
@@ -125,9 +116,7 @@ export default function SignIn() {
               <div className="w-full border-t"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
@@ -143,7 +132,7 @@ export default function SignIn() {
           </Button>
 
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link href="/auth/signup" className="text-blue-500 hover:underline">
               Sign Up
             </Link>

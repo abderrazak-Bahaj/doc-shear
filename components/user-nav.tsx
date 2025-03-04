@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut } from 'next-auth/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,21 +8,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function UserNav() {
   const { data: session } = useSession();
   const router = useRouter();
-  const userEmail = session?.user?.email || "";
+  const userEmail = session?.user?.email || '';
   const userInitials = userEmail
-    .split("@")[0]
-    .split(".")
-    .map((n) => n[0])
-    .join("")
+    .split('@')[0]
+    .split('.')
+    .map(n => n[0])
+    .join('')
     .toUpperCase();
 
   return (
@@ -30,7 +30,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={session?.user?.image || ""} alt={userEmail} />
+            <AvatarImage src={session?.user?.image || ''} alt={userEmail} />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -43,12 +43,11 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-
         <DropdownMenuItem
           className="text-muted-foreground focus:text-destructive cursor-pointer"
           onClick={() => {
             // navigate to profile page
-            router.push("/profile");
+            router.push('/profile');
           }}
         >
           <User className="mr-2 h-4 w-4" />

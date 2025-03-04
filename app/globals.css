@@ -102,11 +102,9 @@
   @apply bg-white/10 backdrop-blur-md border border-white/20;
 }
 
-.tippy-box{
+.tippy-box {
   max-width: unset !important;
 }
-
-
 
 .tiptap :first-child {
   margin-top: 0;

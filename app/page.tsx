@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { FileText } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { FileText } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -9,8 +9,8 @@ export default function Home() {
         Welcome to ModernApp
       </h1>
       <p className="mt-4 text-xl text-muted-foreground max-w-[700px]">
-        A modern Next.js application with rich text editing capabilities,
-        authentication, and beautiful UI.
+        A modern Next.js application with rich text editing capabilities, authentication, and
+        beautiful UI.
       </p>
       <div className="mt-8 flex gap-4">
         <Link href="/auth/signin">

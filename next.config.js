@@ -8,7 +8,6 @@ const nextConfig = {
   },
   experimental: {
     appDir: true,
-
   },
   // Add any other config you need
 };

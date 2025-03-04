@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
-import { hash } from "bcryptjs";
-import { connectToDatabase } from "@/lib/db";
-import User from "@/models/user";
+import { NextResponse } from 'next/server';
+import { hash } from 'bcryptjs';
+import { connectToDatabase } from '@/lib/db';
+import User from '@/models/user';
 
 export async function POST(request: Request) {
   try {
     const { name, email, password } = await request.json();
 
     if (!name || !email || !password) {
-      return new NextResponse("Missing required fields", { status: 400 });
+      return new NextResponse('Missing required fields', { status: 400 });
     }
 
     await connectToDatabase();
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return new NextResponse("User already exists", { status: 400 });
+      return new NextResponse('User already exists', { status: 400 });
     }
 
     // Hash password
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({
-      message: "User created successfully",
+      message: 'User created successfully',
       user: {
         id: user._id,
         name: user.name,
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Error creating user:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error creating user:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

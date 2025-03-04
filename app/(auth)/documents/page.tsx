@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Loader2, Plus} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import DocumentCard from "@/components/document-card";
-import { toast } from "@/hooks/use-toast";
-import CreateDocument from "@/components/modal/create-document";
-import { useQuery } from "@tanstack/react-query";
-import { getDocuments } from "@/services/api";
-import ViewLink from "@/components/modal/view-link";
-import ConfirmDeletion from "@/components/modal/confirm-deletion";
-import { Document } from "@/types";
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { Loader2, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import DocumentCard from '@/components/document-card';
+import { toast } from '@/hooks/use-toast';
+import CreateDocument from '@/components/modal/create-document';
+import { useQuery } from '@tanstack/react-query';
+import { getDocuments } from '@/services/api';
+import ViewLink from '@/components/modal/view-link';
+import ConfirmDeletion from '@/components/modal/confirm-deletion';
+import { Document } from '@/types';
 
 export default function DocumentsPage() {
   const [showDialogAddNew, setShowDialogAddNew] = useState(false);
@@ -22,7 +22,7 @@ export default function DocumentsPage() {
   const { data: documents, isLoading } = useQuery({
     queryKey: ['documents'],
     queryFn: getDocuments,
-  });  
+  });
 
   if (isLoading) {
     return (
@@ -42,7 +42,7 @@ export default function DocumentsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {documents?.map((doc) => (
+        {documents?.map(doc => (
           <DocumentCard
             key={doc._id}
             document={doc}
@@ -52,14 +52,8 @@ export default function DocumentsPage() {
         ))}
       </div>
 
-      <ViewLink
-        docSelected={docSelected}
-        setDocSeleced={setDocSeleced}
-      />
-      <ConfirmDeletion
-        docToDelete={docToDelete}
-        setDocToDelete={setDocToDelete}
-      />
+      <ViewLink docSelected={docSelected} setDocSeleced={setDocSeleced} />
+      <ConfirmDeletion docToDelete={docToDelete} setDocToDelete={setDocToDelete} />
       <CreateDocument showDialog={showDialogAddNew} setShowDialog={setShowDialogAddNew} />
     </div>
   );
