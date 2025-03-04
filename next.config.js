@@ -1,12 +1,9 @@
 /** @type {import('next').NextConfig} */
-  const nextConfig = {
-  typescript: {
-      ignoreBuildErrors: true,
+const nextConfig = {
+  experimental: {
+    appDir: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: { unoptimized: true },
+  // Add any other config you need
 };
 
 module.exports = nextConfig;

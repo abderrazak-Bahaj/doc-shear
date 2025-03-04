@@ -6,53 +6,62 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
+import { signup } from "@/services/api";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import ErrorField from "@/components/ui/error-field";
 
 export default function SignUp() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const mutationSignup = useMutation({
+    mutationFn: signup,
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Account created successfully",
+      });
+      router.push("/auth/signin");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create account",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const initialValues = {
     name: "",
     email: "",
     password: "",
+  };
+
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      toast({
-        title: "Success",
-        description: "Account created successfully. Please sign in.",
-      });
-
-      router.push("/auth/signin");
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    values,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    errors,
+    isSubmitting,
+  } = useFormik({
+    initialValues,
+    validationSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
+    onSubmit: async (values, { setSubmitting }) => {
+      await mutationSignup.mutateAsync(values);
+      setSubmitting(false);
+    },
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
@@ -66,37 +75,44 @@ export default function SignUp() {
               <Input
                 type="text"
                 placeholder="Name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                required
+                name="name"
+                value={values.name}
+                autoComplete="new-name"
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              <ErrorField message={errors.name} />
             </div>
             <div className="space-y-2">
               <Input
                 type="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
+                name="email"
+                value={values.email}
+                autoComplete="new-email"
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              <ErrorField message={errors.email} />
             </div>
             <div className="space-y-2">
               <Input
                 type="password"
                 placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
+                name="password"
+                value={values.password}
+                autoComplete="new-password"
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              <ErrorField message={errors.password} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Sign Up"}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || mutationSignup.isPending}
+            >
+              {mutationSignup.isPending ? "Creating account..." : "Sign Up"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
