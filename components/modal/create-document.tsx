@@ -22,11 +22,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createDocument } from "@/servicces/api";
+import { createDocument } from "@/services/api";
 import { useMutation } from "@tanstack/react-query";
 import ErrorField from "../ui/error-field";
 import { useQueryClient } from "@tanstack/react-query";
-import { generateRandomString } from "@/servicces/utilis";
+import { generateRandomString } from "@/services/utilis";
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
@@ -54,7 +54,7 @@ const CreateDocument = ({
         description: "Document created successfully",
       });
       setShowDialog(false);
-      queryClient.invalidateQueries({ queryKey: ["get-documents"] });
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
     onError: (error) => {
       toast({
@@ -110,7 +110,7 @@ const CreateDocument = ({
             <Select
               value={formik.values.privacy}
               onValueChange={(value: "regular" | "one-time") =>
-                formik.setFieldValue("type", value)
+                formik.setFieldValue("privacy", value)
               }
             >
               <SelectTrigger>

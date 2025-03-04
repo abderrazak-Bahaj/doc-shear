@@ -3,44 +3,46 @@ import { getServerSession } from "next-auth";
 import { connectToDatabase } from "@/lib/db";
 import Document from "@/models/document";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import mongoose from 'mongoose';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectToDatabase();
-
-    const document = await Document.findById(params.id);
-    if (!document) {
-      return new NextResponse("Document not found", { status: 404 });
-    }
-
-    // Check if document is public
-    if (document.privacy === "public") {
-      // Update view count and last viewed time for public documents
-      document.viewCount = (document.viewCount || 0) + 1;
-      document.lastViewedAt = new Date();
-      await document.save();
-      return NextResponse.json(document);
-    }
-
-    // If not public, check user authentication
     const session = await getServerSession(authOptions);
+
     if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Check if user has access
-    const hasAccess = 
-      document.userId === session.user.email ||
-      document.allowedUsers.some(user => user.email === session.user.email);
+    await connectToDatabase();
 
-    if (!hasAccess) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    // Convert string ID to ObjectId
+    let documentId;
+    try {
+      documentId = new mongoose.Types.ObjectId(params.id);
+    } catch (error) {
+      return new NextResponse("Invalid document ID", { status: 400 });
     }
 
+    const document = await Document.findOne({
+      _id: documentId,
+      $or: [
+        { userId: session.user.email }, // Document owner
+        { "allowedUsers.email": session.user.email }, // Shared with user
+        { privacy: "public" }, // Public document
+      ],
+    }).lean();
+
+    // Check if document exists and user has access
+    if (!document) {
+      return new NextResponse("Not Found or Not Authorized", { status: 403 });
+    }
+
+    // Return the document
     return NextResponse.json(document);
+
   } catch (error) {
     console.error("Error fetching document:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
@@ -57,19 +59,21 @@ export async function PUT(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    await connectToDatabase();
+
+    // Convert string ID to ObjectId
+    let documentId;
+    try {
+      documentId = new mongoose.Types.ObjectId(params.id);
+    } catch (error) {
+      return new NextResponse("Invalid document ID", { status: 400 });
+    }
+
     const body = await request.json();
     const { title, content, privacy, publicSlug } = body;
 
-    console.log("Updating document:", {
-      id: params.id,
-      privacy,
-      publicSlug,
-    });
-
-    await connectToDatabase();
-
     const document = await Document.findOne({
-      _id: params.id,
+      _id: documentId,
       userId: session.user.email, // Only owner can update
     });
 
@@ -78,28 +82,21 @@ export async function PUT(
     }
 
     // Update document fields
-    if (title) document.title = title;
-    if (content) document.content = content;
-    if (privacy) {
+    if (title !== undefined) document.title = title;
+    if (content !== undefined) document.content = content;
+    if (privacy !== undefined) {
       document.privacy = privacy;
       // Update public slug
       if (privacy === "public") {
         document.publicSlug = publicSlug;
-        console.log("Setting document to public with slug:", publicSlug);
       } else {
         document.publicSlug = undefined;
-        console.log("Removing public slug");
       }
     }
 
     const savedDoc = await document.save();
-    console.log("Saved document:", {
-      id: savedDoc._id,
-      privacy: savedDoc.privacy,
-      publicSlug: savedDoc.publicSlug,
-    });
-
     return NextResponse.json(savedDoc);
+
   } catch (error) {
     console.error("Error updating document:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
@@ -118,8 +115,16 @@ export async function DELETE(
 
     await connectToDatabase();
 
+    // Convert string ID to ObjectId
+    let documentId;
+    try {
+      documentId = new mongoose.Types.ObjectId(params.id);
+    } catch (error) {
+      return new NextResponse("Invalid document ID", { status: 400 });
+    }
+
     const document = await Document.findOneAndDelete({
-      _id: params.id,
+      _id: documentId,
       userId: session.user.email, // Only owner can delete
     });
 

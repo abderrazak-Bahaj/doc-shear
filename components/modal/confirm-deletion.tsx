@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteDocument } from "@/servicces/api";
+import { deleteDocument } from "@/services/api";
 import { toast } from "@/hooks/use-toast";
 
 const ConfirmDeletion = ({ docToDelete, setDocToDelete }: any) => {

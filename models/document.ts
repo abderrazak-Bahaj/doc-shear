@@ -8,19 +8,16 @@ const documentSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
-      default: "<p>Start writing your document...</p>",
+      default: "",
     },
     userId: {
       type: String,
       required: true,
-      index: true,
     },
     privacy: {
       type: String,
       enum: ["private", "public", "restricted", "one-time"],
       default: "private",
-      required: true,
     },
     publicSlug: {
       type: String,
@@ -30,17 +27,6 @@ const documentSchema = new mongoose.Schema(
       type: String,
       sparse: true,
     },
-    oneTimeViewed: {
-      type: Boolean,
-      default: false,
-    },
-    viewCount: {
-      type: Number,
-      default: 0,
-    },
-    lastViewedAt: {
-      type: Date,
-    },
     allowedUsers: [
       {
         email: String,
@@ -48,31 +34,28 @@ const documentSchema = new mongoose.Schema(
           type: String,
           enum: ["viewer", "editor"],
         },
-        confirmedAt: Date,
       },
     ],
-    pendingInvites: [
-      {
-        email: String,
-        role: {
-          type: String,
-          enum: ["viewer", "editor"],
-        },
-        invitedAt: Date,
-      },
-    ],
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
+    lastViewedAt: Date,
   },
   {
     timestamps: true,
   }
 );
 
-// Create indexes
-documentSchema.index({ publicSlug: 1 }, { sparse: true });
-documentSchema.index({ oneTimeKey: 1 }, { sparse: true });
-documentSchema.index({ "allowedUsers.email": 1 });
+// Define indexes only once
+documentSchema.index({ userId: 1 });
+documentSchema.index({ publicSlug: 1 }, { unique: true, sparse: true });
+documentSchema.index({ oneTimeKey: 1 }, { unique: true, sparse: true });
 
-// Ensure the model is not recreated if it already exists
-const Document = mongoose.models.Document || mongoose.model("Document", documentSchema);
+// Clear existing models before creating new one
+mongoose.models = {};
+
+// Create and export the model
+const Document = mongoose.model("Document", documentSchema);
 
 export default Document;

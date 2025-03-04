@@ -9,52 +9,20 @@ import DocumentCard from "@/components/document-card";
 import { toast } from "@/hooks/use-toast";
 import CreateDocument from "@/components/modal/create-document";
 import { useQuery } from "@tanstack/react-query";
-import { getDocuments } from "@/servicces/api";
-import OneTimeViewLink from "@/components/modal/one-time-view-link";
+import { getDocuments } from "@/services/api";
+import ViewLink from "@/components/modal/view-link";
 import ConfirmDeletion from "@/components/modal/confirm-deletion";
-
-interface Document {
-  _id: string;
-  title: string;
-  content: string;
-  updatedAt: string;
-  privacy: string;
-  viewCount: number;
-  publicSlug?: string;
-  oneTimeKey?: string;
-}
+import { Document } from "@/types";
 
 export default function DocumentsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [showDialogAddNew, setShowDialogAddNew] = useState(false);
   const [docSelected, setDocSeleced] = useState<Document | null>(null);
   const [docToDelete, setDocToDelete] = useState<Document | null>(null);
 
-  const { data: documents = [], isLoading } = useQuery<Document[]>({
-    queryKey: ["get-documents"],
-    queryFn: async () => {
-      const response = await getDocuments();
-      if (!response.ok) {
-        throw new Error("Failed to fetch documents");
-      }
-      return response.json();
-    },
-    enabled: status === "authenticated",
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to load documents",
-        variant: "destructive",
-      });
-    },
-  });
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/");
-    }
-  }, [status, router]);
+  const { data: documents, isLoading } = useQuery({
+    queryKey: ['documents'],
+    queryFn: getDocuments,
+  });  
 
   if (isLoading) {
     return (
@@ -84,7 +52,7 @@ export default function DocumentsPage() {
         ))}
       </div>
 
-      <OneTimeViewLink
+      <ViewLink
         docSelected={docSelected}
         setDocSeleced={setDocSeleced}
       />

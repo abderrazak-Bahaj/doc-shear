@@ -1,56 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { TipTapEditor } from "@/components/editor/tiptap-editor";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Eye, Clock } from "lucide-react";
-
-interface DocumentData {
-  _id: string;
-  title: string;
-  content: string;
-  viewCount: number;
-  lastViewedAt?: string;
-}
+import { DocumentData } from "@/types";
+import { getShareDocument } from "@/services/api";
 
 export default function SharedDocumentPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const router = useRouter();
-  const [document, setDocument] = useState<DocumentData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { 
+    data: document, 
+    isLoading, 
+    error 
+  } = useQuery<DocumentData, Error>({
+    queryKey: ['sharedDocument', params.slug],
+    queryFn: () => getShareDocument(params.slug),
+    staleTime: 5 * 60 * 1000, 
+    retry: 1,
+  });
 
-  useEffect(() => {
-    const fetchDocument = async () => {
-      try {
-        console.log("Fetching document with slug:", params.slug); // Debug log
-        const response = await fetch(`/api/documents/shared/${params.slug}`);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error response:", errorText); // Debug log
-          throw new Error(errorText || "Failed to fetch document");
-        }
-        
-        const data = await response.json();
-        console.log("Received document:", data); // Debug log
-        setDocument(data);
-      } catch (error) {
-        console.error("Error fetching document:", error);
-        setError("Document not found or is no longer public");
-      } finally {
-        setLoading(false);
-      }
-    };
+  console.log(document);
 
-    fetchDocument();
-  }, [params.slug]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -58,6 +33,7 @@ export default function SharedDocumentPage({
     );
   }
 
+  // Show error state
   if (error || !document) {
     return (
       <div className="container mx-auto p-4">
@@ -65,7 +41,7 @@ export default function SharedDocumentPage({
           <CardContent className="p-6">
             <div className="text-center py-8">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                {error || "Document not found"}
+                {error?.message || "Document not found"}
               </h2>
               <p className="text-gray-500 dark:text-gray-400">
                 The document you're looking for might have been moved or is no longer public.

@@ -11,8 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
+const ViewLink = ({
+  docSelected,
+  setDocSeleced,
+}: {
+  docSelected: any;
+  setDocSeleced: any;
+}) => {
+  const isOneTime = docSelected?.privacy === "one-time";
 
-const OneTimeViewLink = ({ docSelected, setDocSeleced }: { docSelected: any, setDocSeleced: any }) => {
   return (
     <Dialog
       open={!!docSelected}
@@ -31,17 +38,23 @@ const OneTimeViewLink = ({ docSelected, setDocSeleced }: { docSelected: any, set
             <Input value={docSelected?.title} readOnly />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">One-time View Link</label>
+            <label className="text-sm font-medium">
+              {isOneTime ? "One-time View Link" : "Shared View Link"}
+            </label>
             <div className="flex items-center gap-2">
               <Input
-                value={`${window.location.origin}/one-time/${docSelected?.publicSlug}`}
+                value={`${window.location.origin}/${
+                  isOneTime ? "one-time" : "shared"
+                }/${docSelected?.publicSlug}`}
                 readOnly
               />
               <Button
                 variant="outline"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${window.location.origin}/one-time/${docSelected?.publicSlug}`
+                    `${window.location.origin}/${
+                      isOneTime ? "one-time" : "shared"
+                    }/${docSelected?.publicSlug}`
                   );
                   toast({
                     title: "Success",
@@ -53,27 +66,32 @@ const OneTimeViewLink = ({ docSelected, setDocSeleced }: { docSelected: any, set
               </Button>
             </div>
 
-            <label className="text-sm font-medium">Key</label>
-            <div className="flex items-center gap-2">
-              <Input value={docSelected?.oneTimeKey} readOnly />
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(docSelected?.oneTimeKey);
-                  toast({
-                    title: "Success",
-                    description: "Key copied to clipboard",
-                  });
-                }}
-              >
-                Copy
-              </Button>
-            </div>
-
-            <p className="text-sm text-muted-foreground">
-              Share this link with someone. The document will be deleted after
-              it&apos;s viewed.
-            </p>
+            {isOneTime && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Key</label>
+                  <div className="flex items-center gap-2">
+                    <Input value={docSelected?.oneTimeKey} readOnly />
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(docSelected?.oneTimeKey);
+                        toast({
+                          title: "Success",
+                          description: "Key copied to clipboard",
+                        });
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Share this link with someone. The document will be deleted
+                  after it&apos;s viewed.
+                </p>
+              </>
+            )}
           </div>
         </div>
         <DialogFooter>
@@ -91,4 +109,4 @@ const OneTimeViewLink = ({ docSelected, setDocSeleced }: { docSelected: any, set
   );
 };
 
-export default OneTimeViewLink;
+export default ViewLink;

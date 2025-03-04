@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TipTapEditor } from "@/components/editor/tiptap-editor";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2, Lock, Eye, AlertTriangle } from "lucide-react";
+import { DocumentData } from "@/types";
+import { getOneTimeDocument } from "@/services/api";
 
-interface DocumentData {
-  _id: string;
-  title: string;
-  content: string;
-}
+
+// Validation schema
+const validationSchema = Yup.object({
+  key: Yup.string().required("Access key is required")
+});
 
 export default function OneTimeDocumentPage({
   params,
@@ -21,35 +26,40 @@ export default function OneTimeDocumentPage({
   params: { slug: string };
 }) {
   const router = useRouter();
-  const [key, setKey] = useState("");
-  const [loading, setLoading] = useState(false);
   const [document, setDocument] = useState<DocumentData | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [viewed, setViewed] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/one-time/${params.slug}?key=${key}`);
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Failed to access document");
-      }
-
-      const data = await response.json();
+  // Use React Query mutation for fetching the document
+  const { mutate, isPending, error, isError } = useMutation({
+    mutationFn: (key: string) => getOneTimeDocument(params.slug, key),
+    onSuccess: (data) => {
       setDocument(data);
       setViewed(true);
-    } catch (error) {
-      console.error("Error accessing document:", error);
-      setError(error instanceof Error ? error.message : "Failed to access document");
-    } finally {
-      setLoading(false);
-    }
-  };
+      toast({
+        title: "Document accessed",
+        description: "This document can only be viewed once.",
+        variant: "default",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to access document",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Initialize Formik
+  const formik = useFormik({
+    initialValues: {
+      key: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      mutate(values.key);
+    },
+  });
 
   if (viewed && document) {
     return (
@@ -91,21 +101,36 @@ export default function OneTimeDocumentPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
+                id="key"
+                name="key"
                 type="password"
                 placeholder="Enter the document key"
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                disabled={loading}
+                value={formik.values.key}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                disabled={isPending}
+                aria-describedby="key-error"
               />
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
+              {(formik.touched.key && formik.errors.key) && (
+                <p id="key-error" className="text-sm text-destructive">
+                  {formik.errors.key}
+                </p>
+              )}
+              {isError && (
+                <p className="text-sm text-destructive">
+                  {error instanceof Error ? error.message : "Failed to access document"}
+                </p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={loading || !key}>
-              {loading ? (
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isPending || !formik.isValid || !formik.dirty}
+            >
+              {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Accessing...

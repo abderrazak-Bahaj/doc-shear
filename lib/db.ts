@@ -10,12 +10,13 @@ if (!MONGODB_URI) {
 
 export async function connectToDatabase() {
   try {
-    const { connection } = await mongoose.connect(MONGODB_URI);
-    
-    if (connection.readyState === 1) {
-      return Promise.resolve(true);
+    if (mongoose.connection.readyState >= 1) {
+      return;
     }
+
+    await mongoose.connect(MONGODB_URI);
   } catch (error) {
-    return Promise.reject(error);
+    console.error('Error connecting to database:', error);
+    throw error;
   }
 }

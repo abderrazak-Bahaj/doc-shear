@@ -40,9 +40,9 @@ export default function DocumentCard({
   };
   
   return (
-    <Card className="hover-card group cursor-pointer overflow-hidden bg-card">
+    <Card className="hover-card group cursor-pointer overflow-hidden bg-card" onClick={handleClick}>
       <CardHeader className="space-y-1 pb-4">
-        <div className="flex items-start justify-between" onClick={handleClick}>
+        <div className="flex items-start justify-between" >
           <CardTitle className="flex items-center gap-2 text-lg font-semibold group-hover:text-primary transition-colors">
             <FileText className="h-5 w-5 text-primary" />
             {document.title}
@@ -72,19 +72,19 @@ export default function DocumentCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent onClick={handleClick}>
+      <CardContent>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
             <span>{new Date(document.updatedAt).toLocaleDateString()}</span>
           </div>
-          {document.privacy !== "private" && (
+          {document.privacy !== "private"  && (
             <div className="flex items-center gap-1">
               <Eye className="h-4 w-4" />
               <span>{document.viewCount || 0} views</span>
             </div>
           )}
-          {document.oneTimeKey && (
+          {(document.privacy === "one-time" || document.privacy === "public") && (
             <button className="flex items-center gap-1" onClick={handelCopy}>
               <Badge variant="outline" className="text-xs">
                 Get link & Key
