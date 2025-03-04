@@ -2,10 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FileText, Calendar, Eye, Trash2 } from "lucide-react";
+import { FileText, Calendar, Eye, Trash2, MoreVertical, Link } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DocumentCardProps {
   document: {
@@ -33,7 +39,7 @@ export default function DocumentCard({
   const handleClick = () => {
     router.push(`/documents/${document._id}`);
   };
-  const handelCopy = (e: React.MouseEvent) => {
+  const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     onCopy?.();
@@ -61,14 +67,25 @@ export default function DocumentCard({
                 {document.privacy}
               </Badge>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={handleDelete}
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                {(document.privacy === "one-time" || document.privacy === "public") && (
+                  <DropdownMenuItem onClick={handleCopy}>
+                    <Link className="h-4 w-4 mr-2" />
+                    Get link & Key
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -78,18 +95,11 @@ export default function DocumentCard({
             <Calendar className="h-4 w-4" />
             <span>{new Date(document.updatedAt).toLocaleDateString()}</span>
           </div>
-          {document.privacy !== "private"  && (
+          {document.privacy !== "private" && (
             <div className="flex items-center gap-1">
               <Eye className="h-4 w-4" />
               <span>{document.viewCount || 0} views</span>
             </div>
-          )}
-          {(document.privacy === "one-time" || document.privacy === "public") && (
-            <button className="flex items-center gap-1" onClick={handelCopy}>
-              <Badge variant="outline" className="text-xs">
-                Get link & Key
-              </Badge>
-            </button>
           )}
         </div>
       </CardContent>
