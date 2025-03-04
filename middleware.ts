@@ -1,41 +1,32 @@
-import { NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
-import { withAuth } from 'next-auth/middleware'
+import { NextRequest, NextResponse } from 'next/server';
 
-export default withAuth(
-  async function middleware(req) {
-    const token = await getToken({ req })
-    const isAuth = !!token
-    const isAuthPage = req.nextUrl.pathname.startsWith('/auth')
-    const isProtectedRoute = req.nextUrl.pathname.startsWith('/(auth)')
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  // Get the pathname of the request
+  const path = request.nextUrl.pathname;
 
-    // Redirect to login if accessing protected route without auth
-    if (!isAuth && isProtectedRoute) {
-      return NextResponse.redirect(
-        new URL(`/auth/signin?callbackUrl=${encodeURIComponent(req.url)}`, req.url)
-      )
-    }
+  console.log('path', path);
 
-    // Redirect to documents if accessing auth page while logged in
-    if (isAuth && isAuthPage) {
-      return NextResponse.redirect(new URL('/documents', req.url))
-    }
+  // Define protected routes
+  const isProtectedRoute = path.startsWith('/documents') || path.startsWith('/profile');
 
-    return NextResponse.next()
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
+  // Check if the user is authenticated by looking for the session token
+  const token =
+    request.cookies.get('next-auth.session-token')?.value ||
+    request.cookies.get('__Secure-next-auth.session-token')?.value;
+
+  // If the route is protected and the user is not authenticated
+  if (isProtectedRoute && !token) {
+    // Redirect to the login page
+    const url = new URL('/api/auth/signin', request.url);
+    return NextResponse.redirect(url);
   }
-)
 
-// Specify which routes should be protected
+  // Continue with the request
+  return NextResponse.next();
+}
+
+// Configure the middleware to only run on specific paths
 export const config = {
-  matcher: [
-    // Protected routes that need authentication
-    '/(auth)/:path*',
-    // Auth pages
-    '/auth/:path*',
-  ],
-} 
+  matcher: ['/documents/:path*', '/profile/:path*'],
+};

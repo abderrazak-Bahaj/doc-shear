@@ -1,12 +1,9 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import Document from "@/models/document";
+import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/db';
+import Document from '@/models/document';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
-  console.log("Received request for slug:", params.slug); // Debug log
+export async function GET(request: Request, { params }: { params: { slug: string } }) {
+  console.log('Received request for slug:', params.slug); // Debug log
 
   try {
     await connectToDatabase();
@@ -14,18 +11,18 @@ export async function GET(
     // Find document by slug and ensure it's public
     const document = await Document.findOne({
       publicSlug: params.slug,
-      privacy: "public",
+      privacy: 'public',
     });
 
-    console.log("Found document:", {
+    console.log('Found document:', {
       id: document?._id,
       privacy: document?.privacy,
       publicSlug: document?.publicSlug,
     }); // Debug log
 
     if (!document) {
-      console.log("Document not found or not public"); // Debug log
-      return new NextResponse("Document not found or is no longer public", {
+      console.log('Document not found or not public'); // Debug log
+      return new NextResponse('Document not found or is no longer public', {
         status: 404,
       });
     }
@@ -46,7 +43,7 @@ export async function GET(
       lastViewedAt: document.lastViewedAt,
     });
   } catch (error) {
-    console.error("Error in shared document API:", error); // Debug log
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error in shared document API:', error); // Debug log
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

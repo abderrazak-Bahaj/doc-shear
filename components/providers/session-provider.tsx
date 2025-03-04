@@ -1,14 +1,10 @@
-"use client";
+'use client';
 
-import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
-export function SessionProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

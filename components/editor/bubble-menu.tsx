@@ -1,4 +1,4 @@
-import { BubbleMenu, Editor } from "@tiptap/react";
+import { BubbleMenu, Editor } from '@tiptap/react';
 import {
   Bold,
   Italic,
@@ -13,8 +13,8 @@ import {
   HighlighterIcon,
   ImageIcon,
   CheckSquare,
-} from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
+} from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
 
 interface EditorBubbleMenuProps {
   editor: Editor;
@@ -28,91 +28,91 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
   const items = [
     {
       icon: Bold,
-      title: "Bold",
+      title: 'Bold',
       action: () => editor.chain().focus().toggleBold().run(),
-      isActive: () => editor.isActive("bold"),
+      isActive: () => editor.isActive('bold'),
     },
     {
       icon: Italic,
-      title: "Italic",
+      title: 'Italic',
       action: () => editor.chain().focus().toggleItalic().run(),
-      isActive: () => editor.isActive("italic"),
+      isActive: () => editor.isActive('italic'),
     },
     {
       icon: Strikethrough,
-      title: "Strike",
+      title: 'Strike',
       action: () => editor.chain().focus().toggleStrike().run(),
-      isActive: () => editor.isActive("strike"),
+      isActive: () => editor.isActive('strike'),
     },
     {
       icon: Code,
-      title: "Code",
+      title: 'Code',
       action: () => editor.chain().focus().toggleCode().run(),
-      isActive: () => editor.isActive("code"),
+      isActive: () => editor.isActive('code'),
     },
     {
       icon: HighlighterIcon,
-      title: "Highlight",
+      title: 'Highlight',
       action: () => editor.chain().focus().toggleHighlight().run(),
-      isActive: () => editor.isActive("highlight"),
+      isActive: () => editor.isActive('highlight'),
     },
     {
       icon: Link,
-      title: "Link",
+      title: 'Link',
       action: () => {
-        const url = window.prompt("Enter URL");
+        const url = window.prompt('Enter URL');
         if (url) {
           editor.chain().focus().setLink({ href: url }).run();
         }
       },
-      isActive: () => editor.isActive("link"),
+      isActive: () => editor.isActive('link'),
     },
     {
       icon: Heading1,
-      title: "Heading 1",
+      title: 'Heading 1',
       action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      isActive: () => editor.isActive("heading", { level: 1 }),
+      isActive: () => editor.isActive('heading', { level: 1 }),
     },
     {
       icon: Heading2,
-      title: "Heading 2",
+      title: 'Heading 2',
       action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      isActive: () => editor.isActive("heading", { level: 2 }),
+      isActive: () => editor.isActive('heading', { level: 2 }),
     },
     {
       icon: List,
-      title: "Bullet List",
+      title: 'Bullet List',
       action: () => editor.chain().focus().toggleBulletList().run(),
-      isActive: () => editor.isActive("bulletList"),
+      isActive: () => editor.isActive('bulletList'),
     },
     {
       icon: ListOrdered,
-      title: "Ordered List",
+      title: 'Ordered List',
       action: () => editor.chain().focus().toggleOrderedList().run(),
-      isActive: () => editor.isActive("orderedList"),
+      isActive: () => editor.isActive('orderedList'),
     },
     {
       icon: CheckSquare,
-      title: "Task List",
+      title: 'Task List',
       action: () => editor.chain().focus().toggleTaskList().run(),
-      isActive: () => editor.isActive("taskList"),
+      isActive: () => editor.isActive('taskList'),
     },
     {
       icon: Quote,
-      title: "Blockquote",
+      title: 'Blockquote',
       action: () => editor.chain().focus().toggleBlockquote().run(),
-      isActive: () => editor.isActive("blockquote"),
+      isActive: () => editor.isActive('blockquote'),
     },
     {
       icon: ImageIcon,
-      title: "Image",
+      title: 'Image',
       action: () => {
-        const url = window.prompt("Enter image URL");
+        const url = window.prompt('Enter image URL');
         if (url) {
           editor.chain().focus().setImage({ src: url }).run();
         }
       },
-      isActive: () => editor.isActive("image"),
+      isActive: () => editor.isActive('image'),
     },
   ];
 

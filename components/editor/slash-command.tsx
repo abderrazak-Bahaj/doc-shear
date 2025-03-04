@@ -1,7 +1,7 @@
-import { Extension } from "@tiptap/core";
-import Suggestion from "@tiptap/suggestion";
-import { ReactRenderer } from "@tiptap/react";
-import tippy from "tippy.js";
+import { Extension } from '@tiptap/core';
+import Suggestion from '@tiptap/suggestion';
+import { ReactRenderer } from '@tiptap/react';
+import tippy from 'tippy.js';
 import {
   Heading1,
   Heading2,
@@ -15,7 +15,7 @@ import {
   CheckSquare,
   Link,
   HighlighterIcon,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Command,
   CommandEmpty,
@@ -23,139 +23,109 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 
 const Command_List = [
   {
-    title: "Text",
-    description: "Just start writing with plain text",
+    title: 'Text',
+    description: 'Just start writing with plain text',
     icon: Text,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .toggleNode("paragraph", "paragraph")
-        .run();
+      editor.chain().focus().deleteRange(range).toggleNode('paragraph', 'paragraph').run();
     },
   },
   {
-    title: "Heading 1",
-    description: "Large section heading",
+    title: 'Heading 1',
+    description: 'Large section heading',
     icon: Heading1,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setNode("heading", { level: 1 })
-        .run();
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
     },
   },
   {
-    title: "Heading 2",
-    description: "Medium section heading",
+    title: 'Heading 2',
+    description: 'Medium section heading',
     icon: Heading2,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setNode("heading", { level: 2 })
-        .run();
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run();
     },
   },
   {
-    title: "Heading 3",
-    description: "Small section heading",
+    title: 'Heading 3',
+    description: 'Small section heading',
     icon: Heading3,
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setNode("heading", { level: 3 })
-        .run();
+      editor.chain().focus().deleteRange(range).setNode('heading', { level: 3 }).run();
     },
   },
   {
-    title: "Bullet List",
-    description: "Create a simple bullet list",
+    title: 'Bullet List',
+    description: 'Create a simple bullet list',
     icon: List,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleBulletList().run();
     },
   },
   {
-    title: "Numbered List",
-    description: "Create a numbered list",
+    title: 'Numbered List',
+    description: 'Create a numbered list',
     icon: ListOrdered,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleOrderedList().run();
     },
   },
   {
-    title: "Task List",
-    description: "Track tasks with a to-do list",
+    title: 'Task List',
+    description: 'Track tasks with a to-do list',
     icon: CheckSquare,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
   },
   {
-    title: "Quote",
-    description: "Capture a quotation",
+    title: 'Quote',
+    description: 'Capture a quotation',
     icon: Quote,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleBlockquote().run();
     },
   },
   {
-    title: "Code Block",
-    description: "Add a code block",
+    title: 'Code Block',
+    description: 'Add a code block',
     icon: Code,
     command: ({ editor, range }) => {
-      const language = window.prompt("Enter language (js, html, css)", "js");
+      const language = window.prompt('Enter language (js, html, css)', 'js');
       if (language) {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setCodeBlock({ language })
-          .run();
+        editor.chain().focus().deleteRange(range).setCodeBlock({ language }).run();
       }
     },
   },
   {
-    title: "Image",
-    description: "Upload or embed an image",
+    title: 'Image',
+    description: 'Upload or embed an image',
     icon: ImageIcon,
     command: ({ editor, range }) => {
-      const url = window.prompt("Enter image URL");
+      const url = window.prompt('Enter image URL');
       if (url) {
         editor.chain().focus().deleteRange(range).setImage({ src: url }).run();
       }
     },
   },
   {
-    title: "Link",
-    description: "Add a link to your content",
+    title: 'Link',
+    description: 'Add a link to your content',
     icon: Link,
     command: ({ editor, range }) => {
-      const url = window.prompt("Enter URL");
+      const url = window.prompt('Enter URL');
       if (url) {
-        editor
-          .chain()
-          .focus()
-          .deleteRange(range)
-          .setLink({ href: url })
-          .run();
+        editor.chain().focus().deleteRange(range).setLink({ href: url }).run();
       }
     },
   },
   {
-    title: "Highlight",
-    description: "Highlight important text",
+    title: 'Highlight',
+    description: 'Highlight important text',
     icon: HighlighterIcon,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleHighlight().run();
@@ -193,9 +163,7 @@ const SlashCommandList = ({
                 </div>
                 <div>
                   <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             </CommandItem>
@@ -215,9 +183,7 @@ const SlashCommandList = ({
                 </div>
                 <div>
                   <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             </CommandItem>
@@ -237,9 +203,7 @@ const SlashCommandList = ({
                 </div>
                 <div>
                   <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             </CommandItem>
@@ -261,14 +225,14 @@ const renderItems = () => {
         editor: props.editor,
       });
 
-      popup = tippy("body", {
+      popup = tippy('body', {
         getReferenceClientRect: props.clientRect,
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
         interactive: true,
-        trigger: "manual",
-        placement: "bottom-start",
+        trigger: 'manual',
+        placement: 'bottom-start',
       });
     },
     onUpdate: (props: { clientRect: any }) => {
@@ -278,7 +242,7 @@ const renderItems = () => {
       });
     },
     onKeyDown: (props: { event: KeyboardEvent }) => {
-      if (props.event.key === "Escape") {
+      if (props.event.key === 'Escape') {
         popup?.[0].hide();
         return true;
       }
@@ -292,20 +256,12 @@ const renderItems = () => {
 };
 
 const SlashCommand = Extension.create({
-  name: "slash-command",
+  name: 'slash-command',
   addOptions() {
     return {
       suggestion: {
-        char: "/",
-        command: ({
-          editor,
-          range,
-          props,
-        }: {
-          editor: any;
-          range: any;
-          props: any;
-        }) => {
+        char: '/',
+        command: ({ editor, range, props }: { editor: any; range: any; props: any }) => {
           props.command({ editor, range });
         },
       },

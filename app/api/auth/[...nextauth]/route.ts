@@ -1,14 +1,14 @@
-import { NextAuthOptions } from "next-auth";
-import NextAuth from "next-auth/next";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GithubProvider from "next-auth/providers/github";
-import { connectToDatabase } from "@/lib/db";
-import { compare } from "bcryptjs";
-import User from "@/models/user";
+import { NextAuthOptions } from 'next-auth';
+import NextAuth from 'next-auth/next';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import GithubProvider from 'next-auth/providers/github';
+import { connectToDatabase } from '@/lib/db';
+import { compare } from 'bcryptjs';
+import User from '@/models/user';
 
 export const authOptions: NextAuthOptions = {
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   providers: [
     GithubProvider({
@@ -16,26 +16,26 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET!,
     }),
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+          throw new Error('Invalid credentials');
         }
 
         await connectToDatabase();
 
         const user = await User.findOne({ email: credentials.email });
         if (!user || !user.password) {
-          throw new Error("No user found");
+          throw new Error('No user found');
         }
 
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error('Invalid password');
         }
 
         return {
@@ -64,14 +64,14 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
+    signIn: '/auth/signin',
+    error: '/auth/error',
   },
   events: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "github") {
+      if (account?.provider === 'github') {
         await connectToDatabase();
-        
+
         // Check if user exists
         const existingUser = await User.findOne({ email: user.email });
         if (!existingUser) {

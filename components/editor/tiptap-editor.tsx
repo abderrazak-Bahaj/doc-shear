@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback, memo, useMemo } from "react";
-import { useEditor, EditorContent, BubbleMenu, Extension } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
-import Link from "@tiptap/extension-link";
-import Image from "@tiptap/extension-image";
-import TaskList from "@tiptap/extension-task-list";
-import TaskItem from "@tiptap/extension-task-item";
-import Highlight from "@tiptap/extension-highlight";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
-import "highlight.js/styles/github-dark.css";
+import { useEffect, useState, useCallback, memo, useMemo } from 'react';
+import { useEditor, EditorContent, BubbleMenu, Extension } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import Highlight from '@tiptap/extension-highlight';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { common, createLowlight } from 'lowlight';
+import 'highlight.js/styles/github-dark.css';
 import {
   Bold,
   Italic,
@@ -24,42 +24,37 @@ import {
   CheckSquare,
   Highlighter,
   Minus,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
 
 // Extension to add language data attribute to code blocks
 const CodeBlockLanguage = Extension.create({
-  name: "codeBlockLanguage",
+  name: 'codeBlockLanguage',
   addAttributes() {
     return {
       dataLanguage: {
-        default: "plaintext",
+        default: 'plaintext',
         parseHTML: (element: HTMLElement) => {
           const language =
-            element.getAttribute("class")?.match(/language-(\w+)/)?.[1] ||
-            "plaintext";
+            element.getAttribute('class')?.match(/language-(\w+)/)?.[1] || 'plaintext';
           return language;
         },
         renderHTML: (attributes: { dataLanguage: string }) => {
           return {
-            "data-language": attributes.dataLanguage || "plaintext",
+            'data-language': attributes.dataLanguage || 'plaintext',
           };
         },
       },
@@ -74,39 +69,27 @@ interface TipTapEditorProps {
 }
 
 // Memoized toolbar button components
-const ToolbarButton = memo(
-  ({ icon, onClick, pressed, disabled, label }: any) => (
-    <Toggle
-      size="sm"
-      pressed={pressed}
-      onPressedChange={onClick}
-      aria-label={label}
-      disabled={disabled}
-    >
-      {icon}
-    </Toggle>
-  )
-);
-ToolbarButton.displayName = "ToolbarButton";
+const ToolbarButton = memo(({ icon, onClick, pressed, disabled, label }: any) => (
+  <Toggle
+    size="sm"
+    pressed={pressed}
+    onPressedChange={onClick}
+    aria-label={label}
+    disabled={disabled}
+  >
+    {icon}
+  </Toggle>
+));
+ToolbarButton.displayName = 'ToolbarButton';
 
 const ToolbarActionButton = memo(({ icon, onClick, disabled, label }: any) => (
-  <Button
-    variant="ghost"
-    size="sm"
-    onClick={onClick}
-    disabled={disabled}
-    aria-label={label}
-  >
+  <Button variant="ghost" size="sm" onClick={onClick} disabled={disabled} aria-label={label}>
     {icon}
   </Button>
 ));
-ToolbarActionButton.displayName = "ToolbarActionButton";
+ToolbarActionButton.displayName = 'ToolbarActionButton';
 
-export function TipTapEditor({
-  content,
-  onChange,
-  editable = true,
-}: TipTapEditorProps) {
+export function TipTapEditor({ content, onChange, editable = true }: TipTapEditorProps) {
   // Track if content is being updated externally to prevent unnecessary re-renders
   const [isExternalUpdate, setIsExternalUpdate] = useState(false);
 
@@ -121,39 +104,38 @@ export function TipTapEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class:
-            "text-primary underline underline-offset-4 hover:text-primary/80",
-          rel: "noopener noreferrer",
-          target: "_blank",
+          class: 'text-primary underline underline-offset-4 hover:text-primary/80',
+          rel: 'noopener noreferrer',
+          target: '_blank',
         },
       }),
       Image.configure({
         HTMLAttributes: {
-          class: "rounded-lg border border-border my-4 max-w-full h-auto",
+          class: 'rounded-lg border border-border my-4 max-w-full h-auto',
           draggable: false,
         },
         allowBase64: true,
       }),
       Highlight.configure({
         HTMLAttributes: {
-          class: "bg-primary/20 rounded-sm px-1 font-semibold",
+          class: 'bg-primary/20 rounded-sm px-1 font-semibold',
         },
         multicolor: true,
       }),
       TaskList.configure({
         HTMLAttributes: {
-          class: "not-prose pl-2",
+          class: 'not-prose pl-2',
         },
       }),
       TaskItem.configure({
         HTMLAttributes: {
-          class: "flex items-start my-4",
+          class: 'flex items-start my-4',
         },
         nested: true,
       }),
       CodeBlockLowlight.configure({
         lowlight,
-        defaultLanguage: "plaintext",
+        defaultLanguage: 'plaintext',
         HTMLAttributes: {
           class: `
           relative
@@ -228,18 +210,18 @@ export function TipTapEditor({
           duration-200
         `,
         },
-        languageClassPrefix: "language-",
+        languageClassPrefix: 'language-',
       }),
       CodeBlockLanguage.configure({
-        types: ["codeBlock"],
+        types: ['codeBlock'],
       }),
       Placeholder.configure({
         placeholder: ({ node }) => {
-          if (node.type.name === "heading") {
+          if (node.type.name === 'heading') {
             return "What's the title?";
           }
-          if (node.type.name === "codeBlock") {
-            return "Enter code...";
+          if (node.type.name === 'codeBlock') {
+            return 'Enter code...';
           }
           return "Start writing or type '/' for commands...";
         },
@@ -253,14 +235,14 @@ export function TipTapEditor({
     () => ({
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none max-w-full min-h-[200px] p-4 prose-pre:my-0 prose-pre:p-0 prose-pre:bg-transparent",
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none max-w-full min-h-[200px] p-4 prose-pre:my-0 prose-pre:p-0 prose-pre:bg-transparent',
       },
     }),
     []
   );
 
   const handleUpdate = useCallback(
-    ({ editor } : any) => {
+    ({ editor }: any) => {
       if (!isExternalUpdate) {
         onChange(editor.getHTML());
       }
@@ -301,17 +283,12 @@ export function TipTapEditor({
   const setLink = useCallback(
     (url: string) => {
       if (!editor) return;
-      if (url === "") {
-        editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run();
         return;
       }
 
-      editor
-        .chain()
-        .focus()
-        .extendMarkRange("link")
-        .setLink({ href: url })
-        .run();
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
     },
     [editor]
   );
@@ -321,13 +298,13 @@ export function TipTapEditor({
     (value: string) => {
       if (!editor) return;
 
-      if (value === "p") {
+      if (value === 'p') {
         editor.chain().focus().setParagraph().run();
-      } else if (value === "h1") {
+      } else if (value === 'h1') {
         editor.chain().focus().toggleHeading({ level: 1 }).run();
-      } else if (value === "h2") {
+      } else if (value === 'h2') {
         editor.chain().focus().toggleHeading({ level: 2 }).run();
-      } else if (value === "h3") {
+      } else if (value === 'h3') {
         editor.chain().focus().toggleHeading({ level: 3 }).run();
       }
     },
@@ -379,13 +356,13 @@ export function TipTapEditor({
   }
 
   // Get current heading value for select
-  const currentHeadingValue = editor.isActive("heading", { level: 1 })
-    ? "h1"
-    : editor.isActive("heading", { level: 2 })
-    ? "h2"
-    : editor.isActive("heading", { level: 3 })
-    ? "h3"
-    : "p";
+  const currentHeadingValue = editor.isActive('heading', { level: 1 })
+    ? 'h1'
+    : editor.isActive('heading', { level: 2 })
+      ? 'h2'
+      : editor.isActive('heading', { level: 3 })
+        ? 'h3'
+        : 'p';
 
   return (
     <div className="tiptap relative w-full border rounded-lg bg-background group">
@@ -398,34 +375,30 @@ export function TipTapEditor({
           <ToolbarButton
             icon={<Bold className="h-4 w-4" />}
             onClick={handleBoldToggle}
-            pressed={editor.isActive("bold")}
+            pressed={editor.isActive('bold')}
             label="Bold"
           />
           <ToolbarButton
             icon={<Italic className="h-4 w-4" />}
             onClick={handleItalicToggle}
-            pressed={editor.isActive("italic")}
+            pressed={editor.isActive('italic')}
             label="Italic"
           />
           <ToolbarButton
             icon={<Highlighter className="h-4 w-4" />}
             onClick={handleHighlightToggle}
-            pressed={editor.isActive("highlight")}
+            pressed={editor.isActive('highlight')}
             label="Highlight"
           />
           <ToolbarButton
             icon={<Code className="h-4 w-4" />}
             onClick={handleCodeToggle}
-            pressed={editor.isActive("code")}
+            pressed={editor.isActive('code')}
             label="Inline Code"
           />
           <Popover>
             <PopoverTrigger asChild>
-              <Toggle
-                size="sm"
-                pressed={editor.isActive("link")}
-                aria-label="Link"
-              >
+              <Toggle size="sm" pressed={editor.isActive('link')} aria-label="Link">
                 <LinkIcon className="h-4 w-4" />
               </Toggle>
             </PopoverTrigger>
@@ -435,27 +408,18 @@ export function TipTapEditor({
                 <Input
                   type="url"
                   placeholder="https://example.com"
-                  defaultValue={editor.getAttributes("link").href || ""}
+                  defaultValue={editor.getAttributes('link').href || ''}
                   className="h-8 text-sm"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
                       e.preventDefault();
                       const input = e.target as HTMLInputElement;
                       if (input.value) {
                         setLink(input.value);
                       } else {
-                        editor
-                          .chain()
-                          .focus()
-                          .extendMarkRange("link")
-                          .unsetLink()
-                          .run();
+                        editor.chain().focus().extendMarkRange('link').unsetLink().run();
                       }
-                      (
-                        e.currentTarget.closest(
-                          '[data-state="open"]'
-                        ) as HTMLElement
-                      )?.click();
+                      (e.currentTarget.closest('[data-state="open"]') as HTMLElement)?.click();
                     }
                   }}
                 />
@@ -465,15 +429,8 @@ export function TipTapEditor({
                     size="sm"
                     className="text-xs h-7"
                     onClick={() => {
-                      editor
-                        .chain()
-                        .focus()
-                        .extendMarkRange("link")
-                        .unsetLink()
-                        .run();
-                      const popover = document.querySelector(
-                        '[data-state="open"]'
-                      ) as HTMLElement;
+                      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+                      const popover = document.querySelector('[data-state="open"]') as HTMLElement;
                       if (popover) popover.click();
                     }}
                   >
@@ -482,19 +439,15 @@ export function TipTapEditor({
                   <Button
                     size="sm"
                     className="text-xs h-7"
-                    onClick={(e) => {
+                    onClick={e => {
                       const input =
                         e.currentTarget.parentElement?.previousElementSibling?.querySelector(
-                          "input"
+                          'input'
                         );
                       if (input && input.value) {
                         setLink(input.value);
                       }
-                      (
-                        e.currentTarget.closest(
-                          '[data-state="open"]'
-                        ) as HTMLElement
-                      )?.click();
+                      (e.currentTarget.closest('[data-state="open"]') as HTMLElement)?.click();
                     }}
                   >
                     Save
@@ -527,21 +480,21 @@ export function TipTapEditor({
           <ToolbarButton
             icon={<Bold className="h-4 w-4" />}
             onClick={handleBoldToggle}
-            pressed={editor.isActive("bold")}
+            pressed={editor.isActive('bold')}
             disabled={!editable}
             label="Bold"
           />
           <ToolbarButton
             icon={<Italic className="h-4 w-4" />}
             onClick={handleItalicToggle}
-            pressed={editor.isActive("italic")}
+            pressed={editor.isActive('italic')}
             disabled={!editable}
             label="Italic"
           />
           <ToolbarButton
             icon={<Highlighter className="h-4 w-4" />}
             onClick={handleHighlightToggle}
-            pressed={editor.isActive("highlight")}
+            pressed={editor.isActive('highlight')}
             disabled={!editable}
             label="Highlight"
           />
@@ -551,21 +504,21 @@ export function TipTapEditor({
           <ToolbarButton
             icon={<List className="h-4 w-4" />}
             onClick={handleBulletListToggle}
-            pressed={editor.isActive("bulletList")}
+            pressed={editor.isActive('bulletList')}
             disabled={!editable}
             label="Bullet List"
           />
           <ToolbarButton
             icon={<ListOrdered className="h-4 w-4" />}
             onClick={handleOrderedListToggle}
-            pressed={editor.isActive("orderedList")}
+            pressed={editor.isActive('orderedList')}
             disabled={!editable}
             label="Ordered List"
           />
           <ToolbarButton
             icon={<CheckSquare className="h-4 w-4" />}
             onClick={handleTaskListToggle}
-            pressed={editor.isActive("taskList")}
+            pressed={editor.isActive('taskList')}
             disabled={!editable}
             label="Task List"
           />
@@ -575,14 +528,14 @@ export function TipTapEditor({
           <ToolbarButton
             icon={<Quote className="h-4 w-4" />}
             onClick={handleBlockquoteToggle}
-            pressed={editor.isActive("blockquote")}
+            pressed={editor.isActive('blockquote')}
             disabled={!editable}
             label="Quote"
           />
           <ToolbarButton
             icon={<Code className="h-4 w-4" />}
             onClick={handleCodeBlockToggle}
-            pressed={editor.isActive("codeBlock")}
+            pressed={editor.isActive('codeBlock')}
             disabled={!editable}
             label="Code Block"
           />
@@ -607,18 +560,14 @@ export function TipTapEditor({
                 <Input
                   type="url"
                   placeholder="https://example.com/image.jpg"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
                       e.preventDefault();
                       const input = e.target as HTMLInputElement;
                       if (input.value) {
                         addImage(input.value);
                       }
-                      (
-                        e.currentTarget.closest(
-                          '[data-state="open"]'
-                        ) as HTMLElement
-                      )?.click();
+                      (e.currentTarget.closest('[data-state="open"]') as HTMLElement)?.click();
                     }
                   }}
                 />
@@ -626,31 +575,23 @@ export function TipTapEditor({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={(e) => {
-                      (
-                        e.currentTarget.closest(
-                          '[data-state="open"]'
-                        ) as HTMLElement
-                      )?.click();
+                    onClick={e => {
+                      (e.currentTarget.closest('[data-state="open"]') as HTMLElement)?.click();
                     }}
                   >
                     Cancel
                   </Button>
                   <Button
                     size="sm"
-                    onClick={(e) => {
+                    onClick={e => {
                       const input =
                         e.currentTarget.parentElement?.previousElementSibling?.querySelector(
-                          "input"
+                          'input'
                         );
                       if (input && input.value) {
                         addImage(input.value);
                       }
-                      (
-                        e.currentTarget.closest(
-                          '[data-state="open"]'
-                        ) as HTMLElement
-                      )?.click();
+                      (e.currentTarget.closest('[data-state="open"]') as HTMLElement)?.click();
                     }}
                   >
                     Insert
