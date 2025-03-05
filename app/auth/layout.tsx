@@ -12,9 +12,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
     );
   }
-  if (status === 'authenticated')
-  {
-    redirect("/documents",RedirectType.replace)
+  if (status === 'authenticated') {
+    redirect('/documents', RedirectType.replace);
   }
-  return <>{children}</>
+  return <>{children}</>;
 }

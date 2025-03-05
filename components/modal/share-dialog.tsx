@@ -161,7 +161,12 @@ export function ShareDialog({ document, open, onOpenChange }: ShareDialogProps) 
     }
   };
 
-  console.log("doc",document.privacy,document.publicSlug ,document.privacy === 'public' && document.publicSlug );
+  console.log(
+    'doc',
+    document.privacy,
+    document.publicSlug,
+    document.privacy === 'public' && document.publicSlug
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

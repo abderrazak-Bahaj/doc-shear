@@ -4,7 +4,7 @@ import { DocumentData } from '@/types';
 
 export function useDocument(id: string) {
   return useQuery<DocumentData>({
-    queryKey: ['document', id ],
+    queryKey: ['document', id],
     queryFn: () => getDocument(id),
     enabled: !!id, // Only fetch if we have an ID and user is logged in
     retry: (failureCount, error) => {
