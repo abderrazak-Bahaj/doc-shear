@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DocumentData } from '@/types';
-import { shareDocument } from '@/services/api';
+import { shareDocument } from '@/lib/api';
 
 interface InviteUserParams {
   documentId: string;

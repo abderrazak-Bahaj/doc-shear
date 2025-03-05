@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import Navbar from '@/components/navbar';
 import { Providers } from './providers';
+import WarpLoader from '@/components/warp-loader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,10 +24,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-              <main className="flex-1 container mx-auto py-6">{children}</main>
-            </div>
+            <WarpLoader>
+              <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-1 container mx-auto py-6">{children}</main>
+              </div>
+            </WarpLoader>
             <Toaster />
           </ThemeProvider>
         </Providers>

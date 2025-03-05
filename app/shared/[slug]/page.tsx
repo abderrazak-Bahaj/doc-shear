@@ -5,7 +5,7 @@ import { TipTapEditor } from '@/components/editor/tiptap-editor';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, Eye, Clock } from 'lucide-react';
 import { DocumentData } from '@/types';
-import { getShareDocument } from '@/services/api';
+import { getShareDocument } from '@/lib/api';
 
 export default function SharedDocumentPage({ params }: { params: { slug: string } }) {
   const {

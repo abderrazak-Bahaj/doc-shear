@@ -22,11 +22,11 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { createDocument } from '@/services/api';
+import { createDocument } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import ErrorField from '../ui/error-field';
 import { useQueryClient } from '@tanstack/react-query';
-import { generateRandomString } from '@/services/utilis';
+import { generateRandomString } from '@/lib/utils';
 
 const validationSchema = Yup.object({
   title: Yup.string().required('Title is required'),

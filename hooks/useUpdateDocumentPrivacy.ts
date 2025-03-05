@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DocumentData } from '@/types';
-import { updateDocument } from '@/services/api';
+import { updateDocument } from '@/lib/api';
 
 interface UpdatePrivacyParams {
   id: string;
