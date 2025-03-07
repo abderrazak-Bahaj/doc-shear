@@ -12,7 +12,7 @@ import { TipTapEditor } from '@/components/editor/tiptap-editor';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2, Lock, Eye, AlertTriangle } from 'lucide-react';
 import { DocumentData } from '@/types';
-import { getOneTimeDocument } from '@/services/api';
+import { getOneTimeDocument } from '@/lib/api';
 
 // Validation schema
 const validationSchema = Yup.object({

@@ -9,7 +9,7 @@ import DocumentCard from '@/components/document-card';
 import { toast } from '@/hooks/use-toast';
 import CreateDocument from '@/components/modal/create-document';
 import { useQuery } from '@tanstack/react-query';
-import { getDocuments } from '@/services/api';
+import { getDocuments } from '@/lib/api';
 import ViewLink from '@/components/modal/view-link';
 import ConfirmDeletion from '@/components/modal/confirm-deletion';
 import { Document } from '@/types';
